@@ -2,56 +2,59 @@
 
 This Splunk App provides search knowledge for Netflow v9 and IPFIX (v10) streams that are captured
 by Logstash acting as a netflow collector.
-It is a work in progress, so please mind the gap. Currently, Logstash only supports v10 flows after applying the ipfix branch from the @bodgit fork for of logstash-codec-netflow.
+It is a work in progress, so please mind the gap. Currently, Logstash only supports v10 flows after applying the ipfix branch from the [Matt Dainty's fork for of logstash-codec-netflow](https://github.com/bodgit/logstash-codec-netflow/tree/ipfix)
 
-It also offers advanced flow analytics for finding cyclical patterns in the netflow data, using the Splunk R app from @rspl.
+It also offers advanced flow analytics for finding cyclical patterns in the netflow data, using the [R for Splunk app](https://github.com/rfsp/r)
 
 ## Installation
 
 0. Logstash Netflow collector:
     * Install Logstash 
     * Put this config in /etc/logstash/conf.d/netflow.conf:
-        
-        ````
-input {
-  udp {
-    port => 2055
-    codec => netflow {
-      versions => [5,9,10]
-    }
-  }
-}
 
-output {
-  file {
-    codec => "json"
-    path => "/var/log/netflow/netflow.json"
-  }
-}
         ````
+        input {
+          udp {
+            port => 2055
+            codec => netflow {
+              versions => [5,9,10]
+            }
+          }
+        }
+
+        output {
+          file {
+            codec => "json"
+            path => "/var/log/netflow/netflow.json"
+          }
+        }
+        ````
+
     * Install the ipfix branch from @bodgit:
-       ````
-cd /opt/logstash/vendor/bundle/jruby/1.9/gems/
-rm -fr logstash-codec-netflow-1.0.0
-git clone https://github.com/bodgit/logstash-codec-netflow.git
-mv logstash-codec-netflow logstash-codec-netflow-1.0.0
-cd logstash-codec-netflow-1.0.0
-git checkout ipfix
+
+        ````
+        cd /opt/logstash/vendor/bundle/jruby/1.9/gems/
+        rm -fr logstash-codec-netflow-1.0.0
+        git clone https://github.com/bodgit/logstash-codec-netflow.git
+        mv logstash-codec-netflow logstash-codec-netflow-1.0.0
+        cd logstash-codec-netflow-1.0.0
+        git checkout ipfix
         ```` 
+
     * Install splunk-forwarder on this machine
 
 1. Splunk indexer:
     * Install this Splunk TA on your indexer(s), or manually create index(es) called "netflow"
 2. Splunk search head:
     * Install this Splunk TA on your search head to get the main netflow dashboard
-    * Install the R for Splunk app through the Splunk app store, or `git clone https://github.com/rfsp/r.git`
+    * Install the R for Splunk app from @rfsp through the Splunk app store, or `git clone https://github.com/rfsp/r.git`
 3. Splunk deployment server:
     * Install this Splunk TA on your deployment server, or manually create an app with the appropriate inputs.conf
 
-    ````
-    cd $SPLUNK_HOME/etc/deployment-apps`
-    git clone https://github.com/jorritfolmer/splunk_ta_netflow_logstash.git
-    ````
+        ````
+        cd $SPLUNK_HOME/etc/deployment-apps`
+        git clone https://github.com/jorritfolmer/splunk_ta_netflow_logstash.git
+        ````
 
     * Enable the inputs on the deployment server by setting `disabled = 0` in `$SPLUNK_HOME/etc/deployment-apps/splunk_ta_netflow_logstash/default/inputs.conf`
     * Create a serverclass (e.g. `netflow`) on the deployment-server
@@ -102,7 +105,7 @@ This Splunk App is compatible with Splunk Enterprise 6.2+.
 
 ### Netflow fields
 
-The original fields are also still available through the "netflow." prefix, followed by their Netflow field names:
+The original fields are also still available through the `netflow.` prefix, followed by their Netflow field names:
 
 #### nprobe (v10 output)
 version
