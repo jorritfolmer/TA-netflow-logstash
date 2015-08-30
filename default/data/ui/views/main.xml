@@ -173,8 +173,7 @@
       <chart>
         <title>Top flows by dest_port</title>
         <search>
-          <query>index=p0f sourcetype=netflow (transport=tcp OR transport=udp) NOT (dest_port=2055 transport="udp") |eval tmp_src=(replace(src_ip,"\.","") . src_port . protocol_number) | eval tmp_dest=(replace(dest_ip,"\.","") . dest_port . protocol_number)
-|eval commonid=tmp_src+tmp_dest |eventstats max(sequence) as maxsequence,sum(bytes_in) as bytes_total, sum(duration) as duration by commonid |eval bytes_in=bytes_total-bytes_in |eval bytes_out=bytes_total-bytes_in |where src_port&gt;dest_port | top dest_port showperc=f</query>
+          <query>index=p0f sourcetype=netflow dvc_ip=$dvc_ip$ (transport=tcp OR transport=udp) NOT (dest_port=2055 transport="udp")  |eval tmp_src=(replace(src_ip,"\.","") . src_port . protocol_number) | eval tmp_dest=(replace(dest_ip,"\.","") . dest_port . protocol_number) |eval commonid=tmp_src+tmp_dest |eventstats max(sequence) as maxsequence,sum(bytes_in) as bytes_total, sum(duration) as duration by commonid |eval bytes_in=bytes_total-bytes_in |eval bytes_out=bytes_total-bytes_in |where src_port&gt;dest_port | top dest_port showperc=f</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
@@ -212,10 +211,7 @@
       <chart>
         <title>Traffic totals by dest_port</title>
         <search>
-          <query>index=p0f sourcetype=netflow (transport=tcp OR transport=udp)  NOT (dest_port=2055 transport="udp")
-|eval tmp_src=(replace(src_ip,"\.","") . src_port . protocol_number) | eval tmp_dest=(replace(dest_ip,"\.","") . dest_port . protocol_number)
-|eval commonid=tmp_src+tmp_dest |eventstats max(sequence) as maxsequence,sum(bytes_in) as bytes_total, sum(duration) as duration by commonid |eval bytes_in=bytes_total-bytes_in |eval bytes_out=bytes_total-bytes_in |where src_port&gt;dest_port
- | stats sum(bytes_in) as bytes_in by dest_port |eval MB=bytes_in/1024/1024 |table dest_port,MB|sort - MB |head 10</query>
+          <query>index=p0f sourcetype=netflow dvc_ip=$dvc_ip$ (transport=tcp OR transport=udp)  NOT (dest_port=2055 transport="udp") |eval tmp_src=(replace(src_ip,"\.","") . src_port . protocol_number) | eval tmp_dest=(replace(dest_ip,"\.","") . dest_port . protocol_number) |eval commonid=tmp_src+tmp_dest |eventstats max(sequence) as maxsequence,sum(bytes_in) as bytes_total, sum(duration) as duration by commonid |eval bytes_in=bytes_total-bytes_in |eval bytes_out=bytes_total-bytes_in |where src_port&gt;dest_port  | stats sum(bytes_in) as bytes_in by dest_port |eval MB=bytes_in/1024/1024 |table dest_port,MB|sort - MB |head 10</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
@@ -255,7 +251,7 @@
       <chart>
         <title>traffic</title>
         <search>
-          <query>index=p0f sourcetype=netflow |timechart span=5m sum(bytes_in) as bytes_in |eval mbps=((bytes_in/300)*8)/1024/1024|timechart avg(mbps) as mbps</query>
+          <query>index=p0f sourcetype=netflow dvc_ip=$dvc_ip$ |timechart span=5m sum(bytes_in) as bytes_in |eval mbps=((bytes_in/300)*8)/1024/1024|timechart avg(mbps) as mbps</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
@@ -286,7 +282,7 @@
       <table>
         <title>Cummulative TCP options seen during session</title>
         <search>
-          <query>index=p0f sourcetype=netflow transport="tcp" |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2 |stats count by cwr,ecn,urg,ack,psh,rst,syn,fin |sort - count</query>
+          <query>index=p0f sourcetype=netflow transport="tcp" dvc_ip=$dvc_ip$ |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2 |stats count by cwr,ecn,urg,ack,psh,rst,syn,fin |sort - count</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
@@ -303,7 +299,7 @@
       <chart>
         <title>Closed port attempts (RST,ACK)</title>
         <search>
-          <query>index=p0f sourcetype=netflow transport=tcp  |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2 |search rst=1 ack=1 syn=0|timechart count</query>
+          <query>index=p0f sourcetype=netflow transport=tcp dvc_ip=$dvc_ip$  |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2 |search rst=1 ack=1 syn=0|timechart count</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
@@ -334,7 +330,7 @@
       <chart>
         <title>SYN's without ACK</title>
         <search>
-          <query>index=p0f sourcetype=netflow transport=tcp  |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2  |search ack=0 syn=1|timechart count</query>
+          <query>index=p0f sourcetype=netflow transport=tcp dvc_ip=$dvc_ip$  |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2  |search ack=0 syn=1|timechart count</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
@@ -365,7 +361,7 @@
       <chart>
         <title>RST before end of session</title>
         <search>
-          <query>index=p0f sourcetype=netflow transport=tcp  |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2 |search fin=0 rst=1 ack=1 syn=1|timechart count</query>
+          <query>index=p0f sourcetype=netflow transport=tcp dvc_ip=$dvc_ip$  |eval fin=tcp_flag_bitfield%2 |eval syn=floor(tcp_flag_bitfield/2)%2 |eval rst=floor(tcp_flag_bitfield/4)%2 |eval psh=floor(tcp_flag_bitfield/8)%2 |eval ack=floor(tcp_flag_bitfield/16)%2 |eval urg=floor(tcp_flag_bitfield/32)%2 |eval ecn=floor(tcp_flag_bitfield/64)%2 |eval cwr=floor(tcp_flag_bitfield/128)%2 |search fin=0 rst=1 ack=1 syn=1|timechart count</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
