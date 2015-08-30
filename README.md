@@ -69,6 +69,7 @@ It also offers advanced flow analytics for finding cyclical patterns in the netf
 None necessary, but if you care about your Splunk license usage, it may be a good idea to switch Logstash from JSON to CSV output. However, this means modifying both Logstash and Splunk configuration, and losing the advantage of the flexible (but expensive) JSON output to the efficient but fixed CSV output.
 
 CSV efficiency: (kb/flows) 95136802/820751 = 116 bytes / flow in Splunk
+
 JSON efficiency: (kb/flows) 246288299/493548 = 499 bytes / flow in Splunk
 
 ## Netflow probes
@@ -78,12 +79,18 @@ This app has been tested with the following netflow probes:
 | netflow probe | v5 | v9 | v10 / IPFIX | output fields
 |---------------|----|----|------|----
 | fprobe        | y  |  N | N    | Only netflow v5 so no ipv6
-| softflowd     | y  |  y | N    | 
+| softflowd     | y  |  y | y    | 
 | nprobe        | y  |  y | y    |
 | ipt_NETFLOW   | y  |  y | y    |
 
 Every probe has its own timeout settings. For example nprobe 120 sec, ipt_NETFLOW 1800 sec, softflowd 3600 sec.
 So in Splunk we should sum over the Flow Keys to get the "real" flow duration/bytes_in/...
+
+## Dashboards
+
+Detail dashboard showing the connections from a certain src_ip in the frequency domain. It seems to be performing a slow portscan with an interval of 1 minute.
+
+![flow detail dashboard](flow_detail.png)
 
 ## Splunk CIM compliance
 
