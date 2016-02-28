@@ -1,7 +1,0 @@
-<nav search_view="search">
-  <view name="main" default="true" />
-  <view name="flow_details" />
-  <view name="search" />
-  <view name="data_models" />
-  <view name="dashboards" />
-</nav>
