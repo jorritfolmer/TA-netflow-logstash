@@ -9,6 +9,7 @@ that has been collected by Logstash.
 1. Install this Splunk TA on your Splunk (Enterprise Security) search head. Make sure to rename it Splunk_TA_netflow_logstash or TA-netflow-logstash otherwise ES won't eat it.
 2. Install Logstash on an instance that will receive netflow data from the various netflow probes
 3. Install a Splunk Universal Forwarder on the Logstash instance
+4. Disable any existing Splunk Add-on for Netflow (Splunk_TA_flowfix)
 
 ## Configuration 
 
