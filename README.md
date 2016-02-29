@@ -4,6 +4,11 @@ This CIM compliant Splunk TA can be used with Splunk Enterprise Security and
 provides field extractions, aliases, and tags for Netflow v5, v9 and IPFIX data
 that has been collected by Logstash.
 
+This fills the Traffic Center panel under Security Domains -> Network in Splunk
+Enterprise Security:
+
+![Splunk ES Traffic Center](splunk_es_traffic_center.png)
+
 ## Installation
 
 1. Install this Splunk TA on your Splunk (Enterprise Security) search head. Make sure to rename it Splunk_TA_netflow_logstash or TA-netflow-logstash otherwise ES won't eat it.
