@@ -1,6 +1,6 @@
-# Splunk TA for Netflow, using Logstash as netflow collector
+# TA-netflow-logstash for Splunk
 
-This CIM compliant Splunk TA can be used with Splunk Enterprise Security and
+This CIM compliant TA can be used with Splunk Enterprise Security and
 provides field extractions, aliases, and tags for Netflow v5, v9 and IPFIX data
 that has been collected by Logstash.
 
@@ -11,7 +11,7 @@ Enterprise Security:
 
 ## Installation
 
-1. Install this Splunk TA on your Splunk (Enterprise Security) search head. Make sure to rename it Splunk_TA_netflow_logstash or TA-netflow-logstash otherwise ES won't eat it.
+1. Install this TA on your Splunk (Enterprise Security) search head. Make sure to rename it TA-netflow-logstash otherwise ES won't eat it.
 2. Install Logstash on an instance that will receive netflow data from the various netflow probes
 3. Install a Splunk Universal Forwarder on the Logstash instance
 4. Disable any existing Splunk Add-on for Netflow (Splunk_TA_flowfix)
