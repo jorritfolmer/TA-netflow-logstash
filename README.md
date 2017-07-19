@@ -21,30 +21,30 @@ Enterprise Security:
 1. Configure Logstash to output a .json file for the received netflow data, for example with the following config file:
 
     ```
-input {
-  udp {
-    port => 2055
-    codec => netflow {
-      versions => [5,9,10]
+    input {
+      udp {
+        port => 2055
+        codec => netflow {
+          versions => [5,9,10]
+        }
+      }
     }
-  }
-}
-
-output {
-  file {
-    codec => "json"
-    path => "/var/log/netflow/netflow.json"
-  }
-}
+    
+    output {
+      file {
+        codec => "json_lines"
+        path => "/var/log/netflow/netflow.json"
+      }
+    }
     ```
 
 2. Have the Splunk Universal Forwarder index the `netflow.json` file, for example with the following Splunk inputs.conf:
 
     ```
-[monitor:///var/log/netflow/netflow.json]
-disabled = false
-sourcetype = netflow_raw
-index=netflow_raw
+    [monitor:///var/log/netflow/netflow.json]
+    disabled = false
+    sourcetype = netflow_raw
+    index=netflow_raw
     ```
 
 3. Create 2 Splunk indexes:
